@@ -1,80 +1,69 @@
 import random
 from typing import List, Tuple
+
+from src.database import DBArgs, Database
+from src.config import init_db_config
+from src.calcite_rewriter import CalciteRewriter, CalciteRule
 from .base import BaseGeneticAlgorithm
-from .dtos import CalciteRule, Individual, MutationType
+from .dtos import Individual, MutationType
 
 
 class GIOnlyApproach(BaseGeneticAlgorithm):
     """GI Only Approach - evolves permutations of Calcite rules"""
 
-    def __init__(self, available_rules: List[CalciteRule], **kwargs):
+    def __init__(self, query: str, db_name: str, schema: str, **kwargs):
         super().__init__(**kwargs)
-        self.available_rules = available_rules
+        self.query = query
+        self.schema = schema
+        self.calcite_rewriter = CalciteRewriter(schema=schema)
+        self.applicable_rules = self.calcite_rewriter.match_calcite_rules(query)
+        self.db_connection = Database(DBArgs(init_db_config(db_name)))
 
-    def generate_initial_population(self, query: str) -> List[Individual]:
+    def generate_initial_population(self) -> List[Individual]:
         """Generate random permutations of applicable rules"""
+        print(f"Generating initial population with {len(self.applicable_rules)} applicable rules")
         population = []
-
-        # Get rules applicable to this query
-        applicable_rules = self._get_applicable_rules(query)
 
         for _ in range(self.population_size):
             # Random permutation of rules
-            rule_sequence = random.sample(applicable_rules, random.randint(1, len(applicable_rules)))
+            rule_sequence = random.sample(self.applicable_rules, random.randint(1, len(self.applicable_rules)))
             individual = Individual(genes=rule_sequence)
             population.append(individual)
 
+        print(f"Initial population size: {len(population)}")
+
         return population
 
-    def _get_applicable_rules(self, query: str) -> List[CalciteRule]:
-        """Determine which rules are applicable to the query"""
-        # This would contain actual logic to determine applicable rules
-        # For now, return all available rules
-        return self.available_rules.copy()
-
-    def evaluate_fitness(self, individual: Individual, query: str) -> float:
+    def evaluate_fitness(self, individual: Individual) -> float:
         """Apply rules via Apache Calcite and measure performance"""
         rule_sequence = individual.genes
 
         # Apply rules using Apache Calcite
-        optimized_query = self._apply_calcite_rules(query, rule_sequence)
+        rewrite_result = self.calcite_rewriter.rewrite(query=self.query, calcite_rules=rule_sequence)
 
-        # Measure performance (execution time, cost, etc.)
-        fitness = self._measure_query_performance(optimized_query)
+        # Estimate fitness based on query cost
+        # If the rewrite failed, assign a high fitness value (worse)
+        fitness = (
+            self.db_connection.cost_estimation(rewrite_result.query) if rewrite_result.query != "None" else float("inf")
+        )
 
         return fitness
-
-    def _apply_calcite_rules(self, query: str, rules: List[CalciteRule]) -> str:
-        """Apply Calcite rules to the query"""
-        # This would interface with Apache Calcite
-        # For now, return a placeholder
-        optimized_query = query
-        for rule in rules:
-            # Apply rule transformation
-            optimized_query = f"/* Applied {rule.name} */ {optimized_query}"
-        return optimized_query
-
-    def _measure_query_performance(self, query: str) -> float:
-        """Measure query performance (higher is better)"""
-        # This would measure actual query execution time, cost, etc.
-        # For now, return a random fitness
-        return random.random()
 
     def mutate(self, individual: Individual) -> Individual:
         """Insert, replace, or delete a rule"""
         rule_sequence = individual.genes.copy()
         mutation_type = random.choice(list(MutationType))
 
-        if mutation_type == MutationType.INSERT and len(rule_sequence) < len(self.available_rules):
+        if mutation_type == MutationType.INSERT and len(rule_sequence) < len(self.applicable_rules):
             # Insert a random rule at random position
-            new_rule = random.choice(self.available_rules)
+            new_rule = random.choice(self.applicable_rules)
             position = random.randint(0, len(rule_sequence))
             rule_sequence.insert(position, new_rule)
 
         elif mutation_type == MutationType.REPLACE and rule_sequence:
             # Replace a random rule
             position = random.randint(0, len(rule_sequence) - 1)
-            rule_sequence[position] = random.choice(self.available_rules)
+            rule_sequence[position] = random.choice(self.applicable_rules)
 
         elif mutation_type == MutationType.DELETE and len(rule_sequence) > 1:
             # Delete a random rule

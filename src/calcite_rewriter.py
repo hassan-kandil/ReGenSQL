@@ -5,7 +5,7 @@ import jpype.imports
 from jpype.types import *
 
 from dataclasses import dataclass
-from .utils.java_utils import to_python_list, to_java_string, to_java_bool, to_java_int, to_java_list
+from src.utils.java_utils import to_python_list, to_java_string, to_java_bool, to_java_int, to_java_list
 
 
 @dataclass
@@ -152,20 +152,21 @@ class CalciteRewriter:
     def rewrite(
         self,
         query: str,
-        rule_names: t.List[str],
-        rounds: int,
+        calcite_rules: t.List[CalciteRule],
+        rounds: int = 1,
     ) -> CalciteRewriteResult:
         """
         Rewrite the query using specified rules.
 
         Args:
             query: SQL query string
-            rule_names: List of rule names to apply
+            calcite_rules: List of CalciteRule objects to apply
             rounds: Number of rewriting rounds
 
         Returns:
             CalciteRewriteResult object containing the rewritten query and applied rules
         """
+        rule_names = [r.name for r in calcite_rules]
         rewrite_result_obj = self.Rewriter.rewrite(
             to_java_string(query),
             to_java_list(self.create_tables),
