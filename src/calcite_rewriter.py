@@ -49,7 +49,6 @@ class CalciteRewriter:
             lib_dir: Path to the directory containing the Java libraries
         """
         if lib_dir is None:
-            print("Current directory:", os.path.dirname(__file__))
             lib_dir = os.path.join(os.path.dirname(__file__), "../CalciteRewrite/out/artifacts/LearnedRewrite_jar")
 
         self.lib_dir = os.path.abspath(lib_dir)

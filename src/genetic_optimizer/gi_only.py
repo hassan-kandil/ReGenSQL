@@ -8,7 +8,7 @@ from .base import BaseGeneticAlgorithm
 from .dtos import Individual, MutationType
 
 
-class GIOnlyApproach(BaseGeneticAlgorithm):
+class GIOnlyOptimizer(BaseGeneticAlgorithm):
     """GI Only Approach - evolves permutations of Calcite rules"""
 
     def __init__(self, query: str, db_name: str, schema: str, **kwargs):
@@ -46,6 +46,12 @@ class GIOnlyApproach(BaseGeneticAlgorithm):
         fitness = (
             self.db_connection.cost_estimation(rewrite_result.query) if rewrite_result.query != "None" else float("inf")
         )
+        # Calculate fitness based execution time
+        # fitness = (
+        #     self.db_connection.pgsql_actual_time(rewrite_result.query)
+        #     if rewrite_result.query != "None"
+        #     else float("inf")
+        # )
 
         return fitness
 
