@@ -9,5 +9,23 @@ __pycache__/
 venv/
 *_venv/
 
+# Ignore cache directories
 cache/
+*/cache/
 
+# Ignore log files
+*.log
+
+# Ignore macOS system files
+__MACOSX/
+
+# Ignore chromadb files
+chroma_db/
+
+# Ignore Jupyter Notebook files
+*.ipynb
+*.ipynb_checkpoints
+
+# Ignore .env files
+*.env
+*.env.*
