@@ -1,6 +1,8 @@
-import random
 import abc
-from typing import List, Tuple, Optional
+import random
+from typing import List, Optional, Tuple
+
+from src.config import logger
 
 from .dtos import Individual
 
@@ -51,6 +53,21 @@ class BaseGeneticAlgorithm(abc.ABC):
         tournament = random.sample(population, min(k, len(population)))
         return min(tournament, key=lambda x: x.fitness or float("inf"))
 
+    def log_population(self):
+        """Print the current population for debugging purposes"""
+        if not self.verbose:
+            return
+        logger.debug(f"Generation {self.generation}: Population size = {len(self.population)}")
+        for i, individual in enumerate(self.population):
+            logger.debug(
+                f"  Individual {i}: Fitness = {individual.fitness}, Genes = {[gene.name for gene in individual.genes]}"
+            )
+
+        logger.debug(
+            f"Best individual: Fitness = {self.best_individual.fitness if self.best_individual else 'None'}, "
+            f"Genes = {[gene.name for gene in self.best_individual.genes] if self.best_individual else 'None'}"
+        )
+
     def evolve(self) -> Individual:
         """Main evolution loop"""
         # Initialize population
@@ -62,7 +79,10 @@ class BaseGeneticAlgorithm(abc.ABC):
 
         self.best_individual = min(self.population, key=lambda x: x.fitness or float("inf"))
 
-        for generation in range(self.max_generations):
+        # Print initial population
+        self.log_population()
+
+        for generation in range(1, self.max_generations + 1):
             self.generation = generation
             new_population = []
 
@@ -101,6 +121,8 @@ class BaseGeneticAlgorithm(abc.ABC):
 
             if current_best.fitness < (self.best_individual.fitness or float("inf")):
                 self.best_individual = current_best
+
+            self.log_population()
 
             # Optional: print progress
             if generation % 10 == 0 and self.verbose:
