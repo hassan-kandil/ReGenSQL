@@ -1,11 +1,10 @@
 import os
 import typing as t
-import jpype as jp
-import jpype.imports
-from jpype.types import *
-
 from dataclasses import dataclass
-from src.utils.java_utils import to_python_list, to_java_string, to_java_bool, to_java_int, to_java_list
+
+import jpype as jp
+from jpype.types import *
+from src.utils.java_utils import to_java_bool, to_java_int, to_java_list, to_java_string, to_python_list
 
 
 @dataclass
@@ -13,12 +12,12 @@ class CalciteRule:
     """Represents a Calcite optimization rule"""
 
     name: str
-    type: str
-    plan_before: str
-    plan_after: str
+    type: t.Optional[str] = None  # Type can be 'normal', 'explore', etc.
+    plan_before: t.Optional[str] = None
+    plan_after: t.Optional[str] = None
 
     def __str__(self):
-        return f"CalciteRule({self.name} - {self.type})"
+        return f"CalciteRule({self.name})" if self.type is None else f"CalciteRule({self.name} - {self.type})"
 
 
 @dataclass
@@ -67,8 +66,8 @@ class CalciteRewriter:
 
     def _import_java_classes(self):
         """Import required Java classes"""
-        from rewriter import Rewriter, MyRules
         from learned import LearnedRewriter
+        from rewriter import MyRules, Rewriter
 
         # Store references to Java classes
         self.Rewriter = Rewriter
