@@ -29,3 +29,8 @@ chroma_db/
 # Ignore .env files
 *.env
 *.env.*
+
+# Ignore jsonl files in rag directory
+**/rag/*.jsonl
+**/rag/*.zip
+
