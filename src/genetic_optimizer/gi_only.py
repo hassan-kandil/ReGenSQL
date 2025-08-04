@@ -2,7 +2,7 @@ import random
 from typing import List, Tuple
 
 from src.calcite_rewriter import CalciteRewriter
-from src.config import init_db_config
+from src.config import init_db_config, logger
 from src.database import Database, DBArgs
 
 from .base import BaseGeneticAlgorithm
@@ -25,7 +25,7 @@ class GIOnlyOptimizer(BaseGeneticAlgorithm):
 
     def generate_initial_population(self) -> List[Individual]:
         """Generate random permutations of applicable rules"""
-        print(f"Generating initial population with {len(self.applicable_rules)} applicable rules")
+        logger.info(f"Generating initial population with {len(self.applicable_rules)} applicable rules")
         population = []
 
         for _ in range(self.population_size):
@@ -34,7 +34,7 @@ class GIOnlyOptimizer(BaseGeneticAlgorithm):
             individual = Individual(genes=rule_sequence)
             population.append(individual)
 
-        print(f"Initial population size: {len(population)}")
+        logger.info(f"Initial population size: {len(population)}")
 
         return population
 

@@ -17,11 +17,11 @@ CASE_RULES_PATH = "stackoverflow-rewrite-rules-query-optimization.jsonl"
 
 # Generate a unique log file name based on the current timestamp
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-log_file_name = f"regensql_{timestamp}.log"
+log_file_name = f"logs/regensql_{timestamp}.log"
 
 # Configure logging
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[logging.FileHandler(log_file_name), logging.StreamHandler()],
 )

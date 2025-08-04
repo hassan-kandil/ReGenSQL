@@ -126,6 +126,6 @@ class BaseGeneticAlgorithm(abc.ABC):
 
             # Optional: print progress
             if generation % 10 == 0 and self.verbose:
-                print(f"Generation {generation}: Best cost = {self.best_individual.fitness:.2f}")
+                logger.info(f"Generation {generation}: Best cost = {self.best_individual.fitness:.2f}")
 
         return self.best_individual
