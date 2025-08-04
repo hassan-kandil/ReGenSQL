@@ -6,8 +6,6 @@ import jsonlines
 from src.config import CASE_RULES_PATH
 
 case_rules: t.Dict[str, t.List[str]] = {}
-# Print current working directory for debugging
-print(f"Current working directory: {os.getcwd()}")
 with open(CASE_RULES_PATH, "r") as fin:
     for line in fin.readlines():
         obj = json.loads(line)

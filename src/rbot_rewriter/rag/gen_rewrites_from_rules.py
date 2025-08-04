@@ -12,9 +12,6 @@ from src.rbot_rewriter.rewrite import get_normal_rules, match_all_rules
 
 from .prompts import *
 
-# print cwd for debugging
-print("Current working directory from rag:", os.getcwd())
-
 calcite_rules: t.Dict[str, str] = {}
 with open("explain_rule/calcite_rewrite_rules_structured.jsonl", "r") as fin:
     for line in fin.readlines():

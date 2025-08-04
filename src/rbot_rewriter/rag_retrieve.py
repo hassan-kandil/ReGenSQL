@@ -21,7 +21,6 @@ def init_docstore() -> SimpleDocumentStore:
 
     def read_docs(filename: str) -> Sequence[BaseNode]:
         doc_nodes = []
-        print("Current working directory from init_docstore:", os.getcwd())
         with open(filename, "r") as fin:
             for line in fin.readlines():
                 obj = json.loads(line)
