@@ -94,15 +94,13 @@ def process_query(query_name: str, query: str, schema: str, args) -> Dict:
     processing_time = end_time - start_time
 
     logger.info(f"Query name: {query_name}")
-    logger.info(f"Query content:\n{query}\n")
-    logger.info(f"Final rewrite query: {final_rewrite_result.query}")
-    logger.info(f"Processing time: {processing_time:.2f} seconds")
+    logger.info(f"Original query:\n{query}\n")
+    logger.info(f"Rewritten query:\n{final_rewrite_result.query}\n")
+    logger.info(f"Processing time:{processing_time:.2f} seconds")
 
     return {
         "query_name": query_name,
         "original_query": query,
-        "db_name": args.db_name,
-        "schema": schema,
         "rewritten_query": final_rewrite_result.query,
         "processing_time_seconds": processing_time,
     }
