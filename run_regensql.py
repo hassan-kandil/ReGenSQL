@@ -9,8 +9,8 @@ from typing import Dict
 from src.config import logger
 from src.genetic_optimizer.gi_llm_rule_based import GILLMRuleBasedOptimizer
 from src.genetic_optimizer.gi_only import GIOnlyOptimizer
-from src.utils.db_utils import actual_time
 from src.utils.load_utils import extract_queries, load_query_file, load_schema
+from src.utils.plotting_utils import plot_fitness_boxplot, plot_fitness_summary_stats
 
 DATASET = "tpch"
 DB_NAME = "tpch10"
@@ -61,6 +61,8 @@ def parse_args():
 
     parser.add_argument("--no-verbose", dest="verbose", action="store_false", help="Disable verbose logging")
 
+    parser.add_argument("--plot-fitness", action="store_true", default=False, help="Generate fitness plots for each query")
+
     return parser.parse_args()
 
 
@@ -100,12 +102,23 @@ def process_query(query_name: str, query: str, schema: str, args) -> Dict:
     logger.info(f"Applied rules: {applied_rules}")
     logger.info(f"Processing time: {processing_time:.2f} seconds")
 
+    # Generate fitness plots if requested
+    if args.plot_fitness and gi_optimizer.fitness_history:
+        output_plots_dir = os.path.join("output", "plots")
+        try:
+            plot_fitness_boxplot(gi_optimizer.fitness_history, output_plots_dir, query_name)
+            plot_fitness_summary_stats(gi_optimizer.fitness_history, output_plots_dir, query_name)
+        except Exception as e:
+            logger.warning(f"Error generating plots for {query_name}: {e}")
+            raise 
+
     return {
         "query_name": query_name,
         "original_query": query,
         "rewritten_query": final_rewrite_result.query,
         "applied_rules": applied_rules,
         "processing_time_seconds": processing_time,
+        "fitness_history": gi_optimizer.fitness_history if hasattr(gi_optimizer, 'fitness_history') else []
     }
 
 def collect_statistics(stats: Dict, total_run_time: float) -> Dict:
@@ -178,6 +191,7 @@ def main():
     logger.info(f"  LLM Enabled: {args.llm_enabled}")
     logger.info(f"  Verbose: {args.verbose}")
     logger.info(f"  Partial Run: {args.partial_run}")
+    logger.info(f"  Plot Fitness: {args.plot_fitness}")
     logger.info("=" * 40)
 
     schema_path = os.path.join(args.dataset, "create_tables.sql")
@@ -202,7 +216,7 @@ def main():
             queries = extract_queries(sql_content)
 
             for j, query in enumerate(queries):
-                name = f"{template}_{idx}_{j}" if idx > 0 else f"{template}_{idx}"
+                name = f"{template}_{idx}_{j}" if j > 0 else f"{template}_{idx}"
                 result = process_query(name, query, schema, args)
                 stats.append(result)
 
@@ -231,7 +245,8 @@ def main():
             "crossover_rate": args.crossover_rate,
             "db_timeout": args.db_timeout,
             "verbose": args.verbose,
-            "partial_run": args.partial_run
+            "partial_run": args.partial_run,
+            "plot_fitness": args.plot_fitness
         },
         "run_statistics": run_statistics,
         "run_queries": stats

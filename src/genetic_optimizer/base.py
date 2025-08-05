@@ -27,6 +27,8 @@ class BaseGeneticAlgorithm(abc.ABC):
         self.best_individual: Optional[Individual] = None
         self.generation = 0
         self.verbose = verbose
+        # Track fitness values across generations for plotting
+        self.fitness_history: List[List[float]] = []
 
     @abc.abstractmethod
     def generate_initial_population(self) -> List[Individual]:
@@ -73,11 +75,17 @@ class BaseGeneticAlgorithm(abc.ABC):
         # Initialize population
         self.population = self.generate_initial_population()
 
+        current_fitness = []
         # Evaluate initial population
         for individual in self.population:
             individual.fitness = self.evaluate_fitness(individual)
+            if individual.fitness is not None and individual.fitness != float("inf"):
+                current_fitness.append(individual.fitness)
 
         self.best_individual = min(self.population, key=lambda x: x.fitness or float("inf"))
+        
+        # Store initial generation fitness values
+        self.fitness_history.append(current_fitness)
 
         # Print initial population
         self.log_population()
@@ -111,16 +119,22 @@ class BaseGeneticAlgorithm(abc.ABC):
             # Trim population to exact size
             new_population = new_population[: self.population_size]
 
+            current_fitness = []
             # Evaluate new population
             for individual in new_population:
                 if individual.fitness is None:
                     individual.fitness = self.evaluate_fitness(individual)
+                if individual.fitness is not None and individual.fitness != float("inf"):
+                    current_fitness.append(individual.fitness)
 
             self.population = new_population
             current_best = min(self.population, key=lambda x: x.fitness or float("inf"))
 
             if current_best.fitness < (self.best_individual.fitness or float("inf")):
                 self.best_individual = current_best
+
+            # Store current generation fitness values (excluding inf values)
+            self.fitness_history.append(current_fitness)
 
             self.log_population()
 
