@@ -14,8 +14,8 @@ from src.utils.load_utils import extract_queries, load_query_file, load_schema
 
 DATASET = "tpch"
 DB_NAME = "tpch10"
-POPULATION_SIZE = 50
-MAX_GENERATIONS = 100
+POPULATION_SIZE = 100
+MAX_GENERATIONS = 20
 MUTATION_RATE = 0.1
 CROSSOVER_RATE = 0.8
 DB_TIMEOUT = 300  # seconds
@@ -89,6 +89,7 @@ def process_query(query_name: str, query: str, schema: str, args) -> Dict:
 
     best_solution = gi_optimizer.evolve()
     final_rewrite_result = gi_optimizer.calcite_rewriter.rewrite(query=query, calcite_rules=best_solution.genes)
+    applied_rules = [gene.name for gene in best_solution.genes]
 
     end_time = time.time()
     processing_time = end_time - start_time
@@ -96,12 +97,14 @@ def process_query(query_name: str, query: str, schema: str, args) -> Dict:
     logger.info(f"Query name: {query_name}")
     logger.info(f"Original query:\n{query}\n")
     logger.info(f"Rewritten query:\n{final_rewrite_result.query}\n")
-    logger.info(f"Processing time:{processing_time:.2f} seconds")
+    logger.info(f"Applied rules: {applied_rules}")
+    logger.info(f"Processing time: {processing_time:.2f} seconds")
 
     return {
         "query_name": query_name,
         "original_query": query,
         "rewritten_query": final_rewrite_result.query,
+        "applied_rules": applied_rules,
         "processing_time_seconds": processing_time,
     }
 
