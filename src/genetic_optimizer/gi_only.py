@@ -29,8 +29,8 @@ class GIOnlyOptimizer(BaseGeneticAlgorithm):
         population = []
 
         for _ in range(self.population_size):
-            # Random permutation of rules with no duplicates
-            rule_sequence = random.sample(self.applicable_rules, random.randint(1, len(self.applicable_rules)))
+            # Random permutation of rules with no duplicates (including empty sequences)
+            rule_sequence = random.sample(self.applicable_rules, random.randint(0, len(self.applicable_rules)))
             individual = Individual(genes=rule_sequence)
             population.append(individual)
 
