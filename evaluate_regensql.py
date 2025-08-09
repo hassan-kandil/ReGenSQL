@@ -13,7 +13,7 @@ def evaluate_query_performance(pg_args: DBArgs, timeout: int, original_query: st
     rewritten_exec_time, _ = actual_time(sql=rewritten_query, db_args=pg_args, timeout=timeout)
     time_difference = original_exec_time - rewritten_exec_time
     is_improved = rewritten_exec_time < original_exec_time
-    improvement_factor = original_exec_time / rewritten_exec_time if rewritten_exec_time > 0 else float("inf")
+    improvement_factor = rewritten_exec_time / original_exec_time if original_exec_time > 0 else float("inf") 
     improvement_percent = ((original_exec_time - rewritten_exec_time) / original_exec_time * 100) if original_exec_time > 0 else 0
 
     logger.info(f"Original execution time: {original_exec_time}")
@@ -151,26 +151,25 @@ def collect_evaluation_statistics(queries_results: list[dict]) -> dict:
 def main():
     output_dir = "output/"
 
-    for output_file in os.listdir(output_dir):
-        if not output_file.endswith(".json"):
-            continue
-        
-        # output_file = "regensql_results_GIOnly_20250804_234925.json"
-        logger.info(f"Processing output file: {output_file}")
-        output_path = os.path.join(output_dir, output_file)
-        output_data = read_json(output_path)
-        run_configuration = output_data["run_configuration"]
-        pg_args = DBArgs(init_db_config(run_configuration["database"]))
-        timeout = run_configuration["db_timeout"]
+    # for output_file in os.listdir(output_dir):
+    #     if not output_file.endswith(".json"):
+    #         continue
+    output_file = "regensql_results_GIOnly_20250805_142616.json"
+    logger.info(f"Processing output file: {output_file}")
+    output_path = os.path.join(output_dir, output_file)
+    output_data = read_json(output_path)
+    run_configuration = output_data["run_configuration"]
+    pg_args = DBArgs(init_db_config(run_configuration["database"]))
+    timeout = run_configuration["db_timeout"]
 
-        evaluate_queries(output_data["run_queries"], pg_args, timeout)
-        evaluation_stats = collect_evaluation_statistics(output_data["run_queries"])
-        output_data["run_statistics"].update(evaluation_stats)
+    evaluate_queries(output_data["run_queries"], pg_args, timeout)
+    evaluation_stats = collect_evaluation_statistics(output_data["run_queries"])
+    output_data["run_statistics"].update(evaluation_stats)
 
-        # Write the updated output data back to the file
-        write_json(output_data, output_path)
+    # Write the updated output data back to the file
+    write_json(output_data, output_path)
 
-        logger.info(f"Evaluation results written to {output_path}")
+    logger.info(f"Evaluation results written to {output_path}")
 
 
 
