@@ -3,6 +3,7 @@ import typing as t
 
 import jpype as jp
 from jpype.types import *
+import jpype.imports
 
 # zip -d LearnedRewrite.jar META-INF/DUMMY.SF
 # zip -d LearnedRewrite.jar META-INF/DUMMY.DSA
@@ -15,30 +16,8 @@ classpath.extend([os.path.join(abs_lib_dir, jar) for jar in os.listdir(abs_lib_d
 if not jp.isJVMStarted():
     jp.startJVM(jp.getDefaultJVMPath(), classpath=classpath)
 
-from java.util import ArrayList
-from learned import LearnedRewriter
-from org.json.simple import JSONObject
 from rewriter import MyRules, Rewriter, RewriteResult
-
-
-def to_java_string(s: str) -> JString:
-    return JString(s)
-
-
-def to_java_bool(b: bool) -> JBoolean:
-    return JBoolean(b)
-
-
-def to_java_int(i: int) -> JInt:
-    return JInt(i)
-
-
-def to_java_list(lst: t.List) -> ArrayList:
-    return ArrayList(lst)
-
-
-def to_python_list(lst: ArrayList) -> t.List:
-    return list(lst)
+from src.utils.java_utils import to_java_bool, to_java_int, to_java_list, to_java_string, to_python_list
 
 
 def match_normal_rules(
@@ -82,20 +61,6 @@ def rewrite(
         to_java_string(database),
     )
 
-
-def learned_rewrite(
-    query: str, create_tables: t.List[str], budget: int, host: str, port: str, user: str, password: str, dbname: str
-) -> JSONObject:
-    return LearnedRewriter.learnedRewrite(
-        to_java_string(query),
-        to_java_list(create_tables),
-        to_java_int(budget),
-        to_java_string(host),
-        to_java_string(port),
-        to_java_string(user),
-        to_java_string(password),
-        to_java_string(dbname),
-    )
 
 
 def get_normal_rules() -> t.List[str]:

@@ -1,3 +1,4 @@
+import os
 import chromadb
 import json
 from typing import Any, Dict, List, Optional, Sequence, Union, cast, Tuple
@@ -18,9 +19,8 @@ from llama_index.core.schema import (
     TextNode,
 )
 
-sys.path.append('..')
-from rag.gen_rewrites_from_rules import NL_RULES, NORMAL_RULES
-from my_rewriter.config import init_llms
+from src.rbot_rag.gen_rewrites_from_rules import NL_RULES, NORMAL_RULES
+from src.config import init_llms
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', type=str, default='')
@@ -39,6 +39,8 @@ chroma_collection = db.get_or_create_collection("stackoverflow")
 vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
 storage_context = StorageContext.from_defaults(vector_store=vector_store)
 
+templates_dir = "src/rbot_rag/"
+
 def read_sql_template_with_embedding(filename: str) -> Dict[str, List[float]]:
     sql_template_to_embed_map = {}
     with open(filename, 'r') as fin:
@@ -48,7 +50,8 @@ def read_sql_template_with_embedding(filename: str) -> Dict[str, List[float]]:
             sql_template_to_embed_map[sql_template] = obj['embedding'] if args.model == '' else Settings.embed_model.get_query_embedding(sql_template)
     return sql_template_to_embed_map
 
-sql_template_to_embed_map = read_sql_template_with_embedding('stackoverflow-rewrite-sql-templates-embed-query-optimization.jsonl')
+
+sql_template_to_embed_map = read_sql_template_with_embedding(templates_dir + 'stackoverflow-rewrite-sql-templates-embed-query-optimization.jsonl')
 assert '' not in sql_template_to_embed_map
 
 def get_one_hot(tot_rules: List[str], cur_rules: List[str]) -> List[int]:
@@ -72,7 +75,7 @@ def read_sql_with_embedding(filename: str) -> Dict[str, List[float]]:
             sql_to_embed_map[obj['sql']] = one_hot
     return sql_to_embed_map
 
-sql_to_embed_map = read_sql_with_embedding('stackoverflow-rewrite-rules-query-optimization.jsonl')
+sql_to_embed_map = read_sql_with_embedding(templates_dir + 'stackoverflow-rewrite-rules-query-optimization.jsonl')
 assert '' not in sql_to_embed_map
 
 def read_sql_with_sql_template(filename: str) -> Dict[str, List[str]]:
@@ -86,7 +89,7 @@ def read_sql_with_sql_template(filename: str) -> Dict[str, List[str]]:
                 sql_to_sql_template_map[f'{myid}-{e["sql"]}'].append(e['template'])
     return sql_to_sql_template_map
 
-sql_to_sql_template_map = read_sql_with_sql_template('stackoverflow-rewrite-sql-templates-query-optimization.jsonl')
+sql_to_sql_template_map = read_sql_with_sql_template(templates_dir + 'stackoverflow-rewrite-sql-templates-query-optimization.jsonl')
 
 def read_content_with_embedding(filename: str) -> Tuple[Dict[str, List[float]], Sequence[IndexNode]]:
     content_to_embed_map = {}
@@ -129,7 +132,7 @@ def read_content_with_embedding(filename: str) -> Tuple[Dict[str, List[float]], 
     print(f'Q&A Count: {qa_cnt}, SQL Count: {sql_cnt}, Node Count: {len(index_nodes)}')
     return content_to_embed_map, index_nodes
 
-content_to_embed_map, index_nodes = read_content_with_embedding('stackoverflow-rewrite-query-optimization.jsonl')
+content_to_embed_map, index_nodes = read_content_with_embedding(templates_dir + 'stackoverflow-rewrite-query-optimization.jsonl')
 
 class MyVectorStoreIndex(VectorStoreIndex):
     def _get_node_with_embedding(

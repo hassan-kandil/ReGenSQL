@@ -10,10 +10,10 @@ from llama_index.core.storage.docstore import SimpleDocumentStore
 from llama_index.vector_stores.chroma import ChromaVectorStore
 from src.utils.llm_utils import achat
 
-from .rag.gen_rewrites_from_rules import gen_rewrites_from_rules
-from .rag.my_query_fusion_retriver import FUSION_MODES, MyQueryFusionRetriever
-from .rag.my_structure_retriever import MyStructureRetriever
-from .rag.prompts import STACKOVERFLOW_QA_PROMPT
+from src.rbot_rag.gen_rewrites_from_rules import gen_rewrites_from_rules
+from src.rbot_rag.my_query_fusion_retriver import FUSION_MODES, MyQueryFusionRetriever
+from src.rbot_rag.my_structure_retriever import MyStructureRetriever
+from src.rbot_rag.prompts import STACKOVERFLOW_QA_PROMPT
 
 
 def init_docstore() -> SimpleDocumentStore:

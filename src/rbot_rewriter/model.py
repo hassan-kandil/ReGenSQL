@@ -9,7 +9,7 @@ from src.config import logger
 from src.utils.llm_utils import achat, chat
 
 from .case_rules import add_case_rules, case_rules
-from .rag.gen_rewrites_from_rules import calcite_rules
+from src.rbot_rag.gen_rewrites_from_rules import calcite_rules
 
 
 def get_rule_sets(rule_names: t.List[str]) -> t.Dict[str, t.List[str]]:
