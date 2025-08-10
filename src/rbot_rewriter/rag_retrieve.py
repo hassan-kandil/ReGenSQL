@@ -34,7 +34,7 @@ def init_docstore() -> SimpleDocumentStore:
                 doc_nodes.append(text_node)
         return doc_nodes
 
-    doc_nodes = read_docs("src/rbot_rewriter/rag/stackoverflow-rewrite-query-optimization.jsonl")
+    doc_nodes = read_docs("src/rbot_rag/stackoverflow-rewrite-query-optimization.jsonl")
     docstore.add_documents(doc_nodes)
     return docstore
 
