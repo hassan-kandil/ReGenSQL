@@ -20,15 +20,16 @@ class GILLMRuleBasedOptimizer(BaseGeneticAlgorithm):
     CASE_BATCH: int = 5
     RULE_BATCH: int = 10
 
-    def __init__(self, query: str, db_name: str, schema: str, **kwargs):
+    def __init__(self, query: str, db_name: str, schema: str, db_timeout: int = 300, use_estimated_cost_fitness: bool = True, **kwargs):
         super().__init__(**kwargs)
         self.query = query
         self.schema = schema
         self.calcite_rewriter = CalciteRewriter(schema=schema)
         self.rbot_model = RBotModel(init_llms(model_type="gpt4o-mini", load_model=True))
         self.applicable_rules = self.calcite_rewriter.match_calcite_rules(query)
-        self.db_connection = Database(DBArgs(init_db_config(db_name)))
+        self.db_connection = Database(DBArgs(init_db_config(db_name)), timeout=db_timeout)
         self.doc_store = init_docstore()
+        self.use_estimated_cost_fitness = use_estimated_cost_fitness
 
     def _retrieve_applicable_suggestions_and_rules(self) -> List[Tuple[str, str]]:
         """Generate examples of rewrite rules related to the query using R-Bot RAG system."""
@@ -49,17 +50,17 @@ class GILLMRuleBasedOptimizer(BaseGeneticAlgorithm):
 
         tasks = []
         # Generate strategies and select rules from cases using R-Bot model
-        print(f"Generating strategies for query: {self.query}")
+        logger.debug(f"Generating strategies for query: {self.query}")
         tasks.append(
             self.rbot_model.gen_summarize_strategies(self.query, retriever_res, strategies, case_batch=self.CASE_BATCH)
         )
-        print(f"Selecting rules for query: {self.query}")
+        logger.debug(f"Selecting rules for query: {self.query}")
         tasks.append(
             self.rbot_model.select_rules_from_cases(
                 retriever_res, normal_rules=normal_rules, explore_rules=explore_rules
             )
         )
-        print(f"Running {len(tasks)} asynchronous LLM tasks...")
+        logger.debug(f"Running {len(tasks)} asynchronous LLM tasks...")
         task_results = run_async_tasks(tasks)
         summarized_strategies = task_results[0]
         selected_rules: List[List[Dict[str, str]]] = task_results[1]
@@ -108,12 +109,16 @@ class GILLMRuleBasedOptimizer(BaseGeneticAlgorithm):
 
         # Apply rules using Apache Calcite
         rewrite_result = self.calcite_rewriter.rewrite(query=self.query, calcite_rules=rule_sequence)
+        if rewrite_result.query == "None":
+            return float("inf")
 
-        # Estimate fitness based on query cost
-        # If the rewrite failed, assign a high fitness value (worse)
-        fitness = (
-            self.db_connection.cost_estimation(rewrite_result.query) if rewrite_result.query != "None" else float("inf")
-        )
+        if self.use_estimated_cost_fitness:
+            # Estimate fitness based on query cost
+            fitness = self.db_connection.cost_estimation(rewrite_result.query)
+        else:
+            # If not using estimated cost, use actual execution time
+            fitness = self.db_connection.pgsql_actual_time(rewrite_result.query)
+        
         return fitness
 
     def crossover(self, parent1: Individual, parent2: Individual) -> Individual:
