@@ -8,6 +8,7 @@ from src.config import init_db_config, init_llms, logger
 from src.database import Database, DBArgs
 from src.rbot_rewriter.model import RBotModel
 from src.rbot_rewriter.rag_retrieve import init_docstore, rag_retrieve
+from src.utils.db_utils import actual_time
 
 from .base import BaseGeneticAlgorithm
 from .dtos import Individual, MutationType
@@ -117,7 +118,7 @@ class GILLMRuleBasedOptimizer(BaseGeneticAlgorithm):
             fitness = self.db_connection.cost_estimation(rewrite_result.query)
         else:
             # If not using estimated cost, use actual execution time
-            fitness = self.db_connection.pgsql_actual_time(rewrite_result.query)
+            fitness, _ = actual_time(rewrite_result.query, self.db_connection.args, self.db_connection.timeout)
         
         return fitness
 

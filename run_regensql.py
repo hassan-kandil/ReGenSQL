@@ -63,6 +63,9 @@ def parse_args():
 
     parser.add_argument("--plot-fitness", action="store_true", default=False, help="Generate fitness plots for each query")
 
+    parser.add_argument("--use-actual-time-fitness", action="store_true", default=False,
+                        help="Use actual execution time for fitness evaluation instead of estimated cost")
+
     return parser.parse_args()
 
 
@@ -81,6 +84,7 @@ def process_query(query_name: str, query: str, schema: str, args) -> Dict:
         "mutation_rate": args.mutation_rate,
         "crossover_rate": args.crossover_rate,
         "verbose": args.verbose,
+        "use_estimated_cost_fitness": not args.use_actual_time_fitness
     }
     
     # Choose optimizer based on LLM flag
@@ -187,6 +191,9 @@ def main():
     logger.info(f"  DB Name: {args.db_name}")
     logger.info(f"  Population Size: {args.population_size}")
     logger.info(f"  Max Generations: {args.max_generations}")
+    logger.info(f"  Mutation Rate: {args.mutation_rate}")
+    logger.info(f"  Crossover Rate: {args.crossover_rate}")
+    logger.info(f"  Use Actual Time Fitness: {args.use_actual_time_fitness}")
     logger.info(f"  DB Timeout: {args.db_timeout}s")
     logger.info(f"  LLM Enabled: {args.llm_enabled}")
     logger.info(f"  Verbose: {args.verbose}")
@@ -243,6 +250,7 @@ def main():
             "max_generations": args.max_generations,
             "mutation_rate": args.mutation_rate,
             "crossover_rate": args.crossover_rate,
+            "use_estimated_cost_fitness": not args.use_actual_time_fitness,
             "db_timeout": args.db_timeout,
             "verbose": args.verbose,
             "partial_run": args.partial_run,

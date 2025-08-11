@@ -4,6 +4,7 @@ from typing import List, Tuple
 from src.calcite_rewriter import CalciteRewriter
 from src.config import init_db_config, logger
 from src.database import Database, DBArgs
+from src.utils.db_utils import actual_time
 
 from .base import BaseGeneticAlgorithm
 from .dtos import Individual, MutationType
@@ -52,7 +53,7 @@ class GIOnlyOptimizer(BaseGeneticAlgorithm):
             fitness = self.db_connection.cost_estimation(rewrite_result.query)
         else:
             # If not using estimated cost, use actual execution time
-            fitness = self.db_connection.pgsql_actual_time(rewrite_result.query)
+            fitness, _ = actual_time(rewrite_result.query, self.db_connection.args, self.db_connection.timeout)
 
         return fitness
 
