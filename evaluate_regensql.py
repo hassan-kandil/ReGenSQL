@@ -1,25 +1,73 @@
 # Evaluate the performance of ReGenSQL
 # This script reads queries from a file, processes them using ReGenSQL, and evaluates the results.
 
+import argparse
 import os
 import statistics
+
+from scipy import stats
+from src.config import init_db_config, logger
 from src.database import DBArgs
 from src.utils.db_utils import actual_time
-from src.config import init_db_config, logger
 from src.utils.json_utils import read_json, write_json
 
+
+def is_execution_time_difference_significant(
+    original_times: list[float], rewritten_times: list[float], alternative: str = "greater", threshold: float = 0.05
+) -> bool:
+    """
+    Check if the difference in execution times is statistically significant.
+
+    Args:
+        original_times (list[float]): List of execution times for the original query.
+        rewritten_times (list[float]): List of execution times for the rewritten query.
+        alternative (str): The alternative hypothesis ('greater', 'less', or 'two-sided').
+        threshold (float): Significance level for the test.
+
+    Returns:
+        bool: True if the difference is statistically significant, False otherwise.
+    """
+    _, p_value = stats.ttest_ind(original_times, rewritten_times, alternative=alternative)
+    return bool(p_value < threshold)
+
+
+def check_is_query_improved(input_cost: float, output_cost: float) -> bool:
+    """
+    Check if the rewritten query is an improvement over the original query.
+
+    Args:
+        input_cost (float): The cost of the original query.
+        output_cost (float): The cost of the rewritten query.
+
+    Returns:
+        bool: True if the rewritten query is an improvement, False otherwise.
+    """
+    return output_cost != float("inf") and output_cost < input_cost
+
+
 def evaluate_query_performance(pg_args: DBArgs, timeout: int, original_query: str, rewritten_query: str) -> dict:
-    original_exec_time, _ = actual_time(sql=original_query, db_args=pg_args, timeout=timeout)
-    rewritten_exec_time, _ = actual_time(sql=rewritten_query, db_args=pg_args, timeout=timeout)
+    original_exec_time, original_exec_times = actual_time(sql=original_query, db_args=pg_args, timeout=timeout)
+    rewritten_exec_time, rewritten_exec_times = actual_time(sql=rewritten_query, db_args=pg_args, timeout=timeout)
+    is_improved = check_is_query_improved(original_exec_time, rewritten_exec_time)
+    is_improved_statistically_significant = is_execution_time_difference_significant(
+        original_exec_times, rewritten_exec_times
+    )
+    if not is_improved:
+        logger.info(
+            f"Rewritten query is not an improvement over the original query: {original_exec_time} vs {rewritten_exec_time}, keeping original execution time."
+        )
+        rewritten_exec_time, rewritten_exec_times = original_exec_time, original_exec_times
     time_difference = original_exec_time - rewritten_exec_time
-    is_improved = rewritten_exec_time < original_exec_time
-    improvement_factor = rewritten_exec_time / original_exec_time if original_exec_time > 0 else float("inf") 
-    improvement_percent = ((original_exec_time - rewritten_exec_time) / original_exec_time * 100) if original_exec_time > 0 else 0
+    improvement_factor = rewritten_exec_time / original_exec_time if original_exec_time > 0 else float("inf")
+    improvement_percent = (
+        ((original_exec_time - rewritten_exec_time) / original_exec_time * 100) if original_exec_time > 0 else 0
+    )
 
     logger.info(f"Original execution time: {original_exec_time}")
     logger.info(f"Rewritten execution time: {rewritten_exec_time}")
     logger.info(f"Time difference: {time_difference}")
     logger.info(f"Improved: {is_improved}")
+    logger.info(f"Statistically significant improved: {is_improved_statistically_significant}")
     logger.info(f"Improvement factor: {improvement_factor:.2f}")
     logger.info(f"Improvement (%): {improvement_percent:.2f}")
 
@@ -27,10 +75,12 @@ def evaluate_query_performance(pg_args: DBArgs, timeout: int, original_query: st
         "original_exec_time": original_exec_time,
         "rewritten_exec_time": rewritten_exec_time,
         "time_difference": time_difference,
-        "is_improved": is_improved,
+        "is_improved": bool(is_improved),
+        "is_improved_statistically_significant": bool(is_improved_statistically_significant),
         "improvement_factor": improvement_factor,
         "improvement_percent": improvement_percent,
     }
+
 
 def evaluate_queries(queries_data: list[dict], pg_args: DBArgs, timeout: int) -> list[dict]:
     for query_data in queries_data:
@@ -48,46 +98,59 @@ def evaluate_queries(queries_data: list[dict], pg_args: DBArgs, timeout: int) ->
 def collect_evaluation_statistics(queries_results: list[dict]) -> dict:
     original_exec_times = [result["original_exec_time"] for result in queries_results]
     rewritten_exec_times = [result["rewritten_exec_time"] for result in queries_results]
-    total_original_time = sum(original_exec_times)
-    total_rewritten_time = sum(rewritten_exec_times)
-    mean_original_time = statistics.mean(original_exec_times)
-    mean_rewritten_time = statistics.mean(rewritten_exec_times)
-    mean_time_improvement_percent = ((total_original_time - total_rewritten_time) / total_original_time * 100)
-    median_original_time = statistics.median(original_exec_times)
-    median_rewritten_time = statistics.median(rewritten_exec_times)
-    median_time_improvement_percent = ((median_original_time - median_rewritten_time) / median_original_time * 100)
-    min_original_time = min(original_exec_times)
-    min_rewritten_time = min(rewritten_exec_times)
-    max_original_time = max(original_exec_times)
-    max_rewritten_time = max(rewritten_exec_times)
+    total_original_time, total_rewritten_time = sum(original_exec_times), sum(rewritten_exec_times)
+    mean_original_time, mean_rewritten_time = statistics.mean(original_exec_times), statistics.mean(
+        rewritten_exec_times
+    )
+    mean_time_improvement_percent = (total_original_time - total_rewritten_time) / total_original_time * 100
+    median_original_time, median_rewritten_time = statistics.median(original_exec_times), statistics.median(
+        rewritten_exec_times
+    )
+    median_time_improvement_percent = (median_original_time - median_rewritten_time) / median_original_time * 100
+    min_original_time, min_rewritten_time = min(original_exec_times), min(rewritten_exec_times)
+    max_original_time, max_rewritten_time = max(original_exec_times), max(rewritten_exec_times)
 
-    original_75th_percentile = None
-    rewritten_75th_percentile = None
+    original_75th_percentile = rewritten_75th_percentile = None
     seventy_fifth_percentile_improvement_percent = None
     if len(original_exec_times) >= 4:
         original_75th_percentile = statistics.quantiles(original_exec_times, n=4)[2]
         rewritten_75th_percentile = statistics.quantiles(rewritten_exec_times, n=4)[2]
-        seventy_fifth_percentile_improvement_percent = ((original_75th_percentile - rewritten_75th_percentile) / original_75th_percentile * 100)
-    
-    original_95th_percentile = None
-    rewritten_95th_percentile = None
+        seventy_fifth_percentile_improvement_percent = (
+            (original_75th_percentile - rewritten_75th_percentile) / original_75th_percentile * 100
+        )
+
+    original_90th_percentile = rewritten_90th_percentile = None
+    ninety_percentitle_improvement_percent = None
+    if len(original_exec_times) >= 10:
+        original_90th_percentile = statistics.quantiles(original_exec_times, n=10)[8]
+        rewritten_90th_percentile = statistics.quantiles(rewritten_exec_times, n=10)[8]
+        ninety_percentitle_improvement_percent = (
+            (original_90th_percentile - rewritten_90th_percentile) / original_90th_percentile * 100
+        )
+
+    original_95th_percentile = rewritten_95th_percentile = None
     ninety_fifth_percentile_improvement_percent = None
     if len(original_exec_times) >= 20:
         original_95th_percentile = statistics.quantiles(original_exec_times, n=20)[18]
         rewritten_95th_percentile = statistics.quantiles(rewritten_exec_times, n=20)[18]
-        ninety_fifth_percentile_improvement_percent = ((original_95th_percentile - rewritten_95th_percentile) / original_95th_percentile * 100)
+        ninety_fifth_percentile_improvement_percent = (
+            (original_95th_percentile - rewritten_95th_percentile) / original_95th_percentile * 100
+        )
 
     improved_count = sum(1 for result in queries_results if result["is_improved"])
-    improvent_factors = [result["improvement_factor"] for result in queries_results]
+    statistically_significant_improved_count = sum(
+        1 for result in queries_results if result["is_improved_statistically_significant"]
+    )
+    improvement_factors = [result["improvement_factor"] for result in queries_results]
     improvement_percentages = [result["improvement_percent"] for result in queries_results]
-    mean_improvement_factor = statistics.mean(improvent_factors)
-    mean_improvement_percent = statistics.mean(improvement_percentages)
-    median_improvement_factor = statistics.median(improvent_factors)
-    median_improvement_percent = statistics.median(improvement_percentages)
-    max_improvement_factor = max(improvent_factors)
-    min_improvement_factor = min(improvent_factors)
-    max_improvement_percent = max(improvement_percentages)
-    min_improvement_percent = min(improvement_percentages)
+    mean_improvement_factor, mean_improvement_percent = statistics.mean(improvement_factors), statistics.mean(
+        improvement_percentages
+    )
+    median_improvement_factor, median_improvement_percent = statistics.median(improvement_factors), statistics.median(
+        improvement_percentages
+    )
+    max_improvement_factor, max_improvement_percent = max(improvement_factors), max(improvement_percentages)
+    min_improvement_factor, min_improvement_percent = min(improvement_factors), min(improvement_percentages)
 
     logger.info(f"Total original execution time: {total_original_time}")
     logger.info(f"Total rewritten execution time: {total_rewritten_time}")
@@ -100,14 +163,18 @@ def collect_evaluation_statistics(queries_results: list[dict]) -> dict:
     logger.info(f"Min original execution time: {min_original_time}")
     logger.info(f"Min rewritten execution time: {min_rewritten_time}")
     logger.info(f"Max original execution time: {max_original_time}")
-    logger.info(f"Max rewritten execution time: {max_rewritten_time}")  
+    logger.info(f"Max rewritten execution time: {max_rewritten_time}")
     logger.info(f"Original 75th percentile: {original_75th_percentile}")
     logger.info(f"Rewritten 75th percentile: {rewritten_75th_percentile}")
     logger.info(f"75th percentile improvement percent: {seventy_fifth_percentile_improvement_percent:.2f}%")
+    logger.info(f"Original 90th percentile: {original_90th_percentile}")
+    logger.info(f"Rewritten 90th percentile: {rewritten_90th_percentile}")
+    logger.info(f"90th percentile improvement percent: {ninety_percentitle_improvement_percent:.2f}%")
     logger.info(f"Original 95th percentile: {original_95th_percentile}")
     logger.info(f"Rewritten 95th percentile: {rewritten_95th_percentile}")
     logger.info(f"95th percentile improvement percent: {ninety_fifth_percentile_improvement_percent:.2f}%")
     logger.info(f"Improved count: {improved_count}")
+    logger.info(f"Statistically significant improved count: {statistically_significant_improved_count}")
     logger.info(f"Mean improvement factor: {mean_improvement_factor}")
     logger.info(f"Mean improvement percent: {mean_improvement_percent:.2f}%")
     logger.info(f"Median improvement factor: {median_improvement_factor}")
@@ -133,10 +200,14 @@ def collect_evaluation_statistics(queries_results: list[dict]) -> dict:
         "original_75th_percentile": original_75th_percentile,
         "rewritten_75th_percentile": rewritten_75th_percentile,
         "75th_percentile_improvement_percent": seventy_fifth_percentile_improvement_percent,
+        "original_90th_percentile": original_90th_percentile,
+        "rewritten_90th_percentile": rewritten_90th_percentile,
+        "90th_percentile_improvement_percent": ninety_percentitle_improvement_percent,
         "original_95th_percentile": original_95th_percentile,
         "rewritten_95th_percentile": rewritten_95th_percentile,
         "95th_percentile_improvement_percent": ninety_fifth_percentile_improvement_percent,
         "improved_count": improved_count,
+        "statistically_significant_improved_count": statistically_significant_improved_count,
         "mean_improvement_factor": mean_improvement_factor,
         "mean_improvement_percent": mean_improvement_percent,
         "median_improvement_factor": median_improvement_factor,
@@ -148,15 +219,28 @@ def collect_evaluation_statistics(queries_results: list[dict]) -> dict:
     }
 
 
-def main():
-    output_dir = "output/"
+def parse_args():
+    """Parse command line arguments"""
+    parser = argparse.ArgumentParser(
+        description="Evaluate the performance of ReGenSQL by analyzing query execution times",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
 
-    # for output_file in os.listdir(output_dir):
-    #     if not output_file.endswith(".json"):
-    #         continue
-    output_file = "regensql_results_GIOnly_20250805_142616.json"
-    logger.info(f"Processing output file: {output_file}")
-    output_path = os.path.join(output_dir, output_file)
+    parser.add_argument("output_file", type=str, help="Path to the ReGenSQL output JSON file to evaluate")
+
+    return parser.parse_args()
+
+
+def main():
+    args = parse_args()
+    output_path = args.output_file
+
+    # Check if the file exists
+    if not os.path.exists(output_path):
+        logger.error(f"Output file not found: {output_path}")
+        return
+
+    logger.info(f"Processing output file: {output_path}")
     output_data = read_json(output_path)
     run_configuration = output_data["run_configuration"]
     pg_args = DBArgs(init_db_config(run_configuration["database"]))
@@ -172,7 +256,5 @@ def main():
     logger.info(f"Evaluation results written to {output_path}")
 
 
-
 if __name__ == "__main__":
     main()
-
