@@ -5,7 +5,6 @@ from datetime import datetime
 from dotenv import load_dotenv
 from llama_index.core import Settings
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
-from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.llms.openai import OpenAI
 from llama_index.llms.openai_like import OpenAILike
 from src.rbot_rewriter.prompts import *
@@ -39,36 +38,28 @@ def init_db_config(database: str) -> dict[str, str]:
     }
 
 
-def init_llms(model_type: str = "open", load_model=True) -> dict[str, str]:
-    print(f"Initializing LLMs with model type: {model_type} and load_model: {load_model}")
-    if "open" in model_type:
-        if load_model:
-            print("Initializing gte-Qwen2-1.5B-instruct embedding model...")
-            Settings.embed_model = HuggingFaceEmbedding(
-                model_name="Alibaba-NLP/gte-Qwen2-1.5B-instruct", max_length=131072
-            )
-        embed_dim = 1536
-    else:
-        if load_model:
-            Settings.embed_model = OpenAIEmbedding(model="text-embedding-3-small")
-        embed_dim = 1536
+def init_llms(llm_name: str = "llama3:8b", is_llm_open: bool = True, load_model: bool = True) -> dict[str, str]:
+    print(f"Initializing LLMs with model: {llm_name}")
+    if load_model:
+        logger.info("Initializing gte-Qwen2-1.5B-instruct embedding model...")
+        Settings.embed_model = HuggingFaceEmbedding(
+            model_name="Alibaba-NLP/gte-Qwen2-1.5B-instruct", max_length=131072
+        )
+    embed_dim = 1536
 
-    if "open" in model_type:
-        if load_model:
-            print("Initializing OpenAILike...")
+    if load_model:
+        if is_llm_open:
+            logger.info("Initializing OpenAILike...")
             Settings.llm = OpenAILike(
-                model="llama3.2:1b",
+                model=llm_name,
                 api_base="http://localhost:11434/v1",
                 api_key="no_key",  # required, but unused
                 is_chat_model=True,
                 timeout=3600,
             )
-    elif "gpt3" in model_type:
-        if load_model:
-            Settings.llm = OpenAI(model="gpt-3.5-turbo-0125")
-    else:
-        if load_model:
-            Settings.llm = OpenAI(model="gpt-4o-mini")
+        else:
+            logger.info("Initializing OpenAI...")
+            Settings.llm = OpenAI(model=llm_name)
 
     return {
         "GEN_CASE_REWRITE_SYS_PROMPT": GEN_CASE_REWRITE_SYS_PROMPT,

@@ -21,12 +21,12 @@ class GILLMRuleBasedOptimizer(BaseGeneticAlgorithm):
     CASE_BATCH: int = 5
     RULE_BATCH: int = 10
 
-    def __init__(self, query: str, db_name: str, schema: str, db_timeout: int = 300, use_estimated_cost_fitness: bool = True, **kwargs):
+    def __init__(self, query: str, db_name: str, schema: str, rbot_model: RBotModel, db_timeout: int = 300, use_estimated_cost_fitness: bool = True, **kwargs):
         super().__init__(**kwargs)
         self.query = query
         self.schema = schema
         self.calcite_rewriter = CalciteRewriter(schema=schema)
-        self.rbot_model = RBotModel(init_llms(model_type="gpt4o-mini", load_model=True))
+        self.rbot_model = rbot_model
         self.applicable_rules = self.calcite_rewriter.match_calcite_rules(query)
         self.db_connection = Database(DBArgs(init_db_config(db_name)), timeout=db_timeout)
         self.doc_store = init_docstore()
