@@ -22,8 +22,8 @@ CROSSOVER_RATE = 0.8
 DB_TIMEOUT = 300  # seconds
 VERBOSE = True
 PARTIAL_RUN = False
-DEFAULT_IS_LLM_OPEN = True  # Use OpenAILike by default
-DEFAULT_LLM_MODEL_NAME = "llama3:8b"
+DEFAULT_USE_OPEN_LLM = False  # Use OpenAILike by default
+DEFAULT_LLM_MODEL_NAME = "gpt-4o-mini"  # Default LLM model name
 
 
 def parse_args():
@@ -80,10 +80,10 @@ def parse_args():
     )
 
     parser.add_argument(
-        "--is-llm-open",
+        "--use-open-llm",
         action="store_true",
-        default=DEFAULT_IS_LLM_OPEN,
-        help="Use OpenAILike for LLM model instead of OpenAI",
+        default=DEFAULT_USE_OPEN_LLM,
+        help="Use Open source LLM"
     )
 
     parser.add_argument("--llm-name", type=str, default=DEFAULT_LLM_MODEL_NAME, help="LLM model name to use")
@@ -215,7 +215,7 @@ def main():
     if args.llm_enabled:
         logger.info("LLM optimization enabled. Initializing RBot model...")
         # Initialize the RBot model with the specified LLM
-        rbot_model = RBotModel(init_llms(llm_name=args.llm_name, is_llm_open=args.is_llm_open, load_model=True))
+        rbot_model = RBotModel(init_llms(llm_name=args.llm_name, is_llm_open=args.use_open_llm, load_model=True))
 
     # Log the configuration
     logger.info("Configuration:")
@@ -228,7 +228,7 @@ def main():
     logger.info(f"  Use Actual Time Fitness: {args.use_actual_time_fitness}")
     logger.info(f"  DB Timeout: {args.db_timeout}s")
     logger.info(f"  LLM Enabled: {args.llm_enabled}")
-    logger.info(f"  LLM Open Source: {args.is_llm_open}")
+    logger.info(f"  LLM Open Source: {args.use_open_llm}")
     logger.info(f"  LLM Model: {args.llm_name}")
     logger.info(f"  Verbose: {args.verbose}")
     logger.info(f"  Partial Run: {args.partial_run}")
@@ -281,7 +281,7 @@ def main():
             "optimization_strategy": "GILLMRuleBased" if args.llm_enabled else "GIOnly",
             "llm_enabled": args.llm_enabled,
             "llm_model_name": args.llm_name,
-            "is_llm_open": args.is_llm_open,
+            "is_llm_open": args.use_open_llm,
             "population_size": args.population_size,
             "max_generations": args.max_generations,
             "mutation_rate": args.mutation_rate,
