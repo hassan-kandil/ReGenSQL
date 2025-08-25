@@ -116,13 +116,13 @@ def collect_evaluation_statistics(queries_results: list[dict]) -> dict:
         statistics.mean(rewritten_exec_times),
         statistics.mean(final_exec_times),
     )
-    mean_time_improvement_percent = (total_original_time - total_final_time) / total_original_time * 100
+    mean_time_improvement_percent = (mean_original_time - mean_final_time) / mean_original_time * 100
     median_original_time, median_rewritten_time, median_final_time = (
         statistics.median(original_exec_times),
         statistics.median(rewritten_exec_times),
         statistics.median(final_exec_times),
     )
-    median_time_improvement_percent = (median_original_time - mean_final_time) / median_original_time * 100
+    median_time_improvement_percent = (median_original_time - median_final_time) / median_original_time * 100
     min_original_time, min_rewritten_time, min_final_time = (
         min(original_exec_times),
         min(rewritten_exec_times),
@@ -229,6 +229,7 @@ def collect_evaluation_statistics(queries_results: list[dict]) -> dict:
         "mean_time_improvement_percent": mean_time_improvement_percent,
         "median_original_time": median_original_time,
         "median_rewritten_time": median_rewritten_time,
+        "median_final_time": median_final_time,
         "median_time_improvement_percent": median_time_improvement_percent,
         "min_original_time": min_original_time,
         "min_rewritten_time": min_rewritten_time,
