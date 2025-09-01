@@ -99,9 +99,11 @@ class GILLMRuleBasedOptimizer(BaseGeneticAlgorithm):
             individual = Individual(genes=genes)
             initial_population.append(individual)
         logger.info(f"Initial population size: {len(initial_population)}")
-        for i, individual in enumerate(initial_population):
-            # Log the genes of each individual for debugging
-            logger.debug(f"Individual {i+1} genes: {individual.genes}")
+        
+        if self.verbose:
+            for i, individual in enumerate(initial_population):
+                # Log the genes of each individual
+                logger.info(f"Individual {i+1} genes: {individual.genes}")
         return initial_population
 
     def evaluate_fitness(self, individual):

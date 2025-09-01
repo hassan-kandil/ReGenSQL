@@ -139,7 +139,7 @@ class BaseGeneticAlgorithm(abc.ABC):
             self.log_population()
 
             # Optional: print progress
-            if generation % 10 == 0 and self.verbose:
+            if generation % 5 == 0 and self.verbose:
                 logger.info(f"Generation {generation}: Best cost = {self.best_individual.fitness:.2f}")
 
         return self.best_individual
