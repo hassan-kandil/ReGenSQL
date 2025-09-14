@@ -15,7 +15,7 @@ from src.utils.plotting_utils import plot_fitness_boxplot, plot_fitness_summary_
 
 DATASET = "tpch"
 DB_NAME = "tpch10"
-POPULATION_SIZE = 100
+POPULATION_SIZE = 50
 MAX_GENERATIONS = 20
 MUTATION_RATE = 0.5
 CROSSOVER_RATE = 0.8
@@ -280,7 +280,7 @@ def main():
             "schema": args.dataset,
             "optimization_strategy": "GILLMRuleBased" if args.llm_enabled else "GIOnly",
             "llm_enabled": args.llm_enabled,
-            "llm_model_name": args.llm_name,
+            "llm_model_name": args.llm_name if args.llm_enabled else None,
             "is_llm_open": args.use_open_llm,
             "population_size": args.population_size,
             "max_generations": args.max_generations,
