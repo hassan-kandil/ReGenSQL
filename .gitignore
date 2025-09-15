@@ -13,9 +13,6 @@ venv/
 cache/
 */cache/
 
-# Ignore output directory
-output/
-
 # Ignore log files
 *.log
 
