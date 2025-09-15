@@ -1,4 +1,4 @@
-# ReGenSQL: ReGenSQL: A Hybrid Query Rewrite Framework with Genetic Improvement and Large Language Models
+# ReGenSQL: A Hybrid Query Rewrite Framework with Genetic Improvement and Large Language Models
 
 ReGenSQL is a novel SQL query optimization system that combines genetic algorithms, rule-based query rewriting, and large language models (LLMs) to automatically discover and apply effective query optimization strategies. The system evolves optimal sequences of Apache Calcite rewrite rules to improve query performance.
 
@@ -24,7 +24,6 @@ ReGenSQL/
 │   └── utils/                      # Utility functions
 ├── CalciteRewrite/                 # Java-based Calcite rule engine
 ├── tpch/                          # TPC-H benchmark queries and schema
-├── tests/                         # Unit and integration tests
 ├── knowledge-base/                # Rule clustering and knowledge functions
 └── chroma_db/                     # Vector database for RAG
 ```
