@@ -22,13 +22,23 @@ class DBArgs(object):
         self.driver = "org.postgresql.Driver"
         self.jdbc = "jdbc:postgresql://"
 
+        # Create the cache directory and file if they do not exist
+        os.makedirs(CACHE_PATH, exist_ok=True)
+        cache_file = os.path.join(CACHE_PATH, f"{self.dbname}.jsonl")
+
+        if not os.path.exists(cache_file):
+            open(cache_file, "a").close()
+
         # Load cache from JSONL file
         self.cache = {}
-        with open(os.path.join(CACHE_PATH, f"{self.dbname}.jsonl"), "r") as f:
+        with open(cache_file, "r") as f:
             for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+
                 obj = json.loads(line)
                 self.cache[obj["sql"]] = obj
-
 
 class Database:
 
