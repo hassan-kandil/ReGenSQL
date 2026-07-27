@@ -1,1 +1,1 @@
-/home/carol/Workspace/join-order-benchmark/6f.sql
+/cs/student/msc/sse/2021/channa/workspace/join-order-benchmark/6f.sql
