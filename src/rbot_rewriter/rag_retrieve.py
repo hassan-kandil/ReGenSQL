@@ -3,6 +3,11 @@ import logging
 import os
 from typing import Dict, Sequence
 
+import sys
+import pysqlite3
+
+sys.modules["sqlite3"] = pysqlite3
+
 import chromadb
 from llama_index.core import StorageContext, VectorStoreIndex
 from llama_index.core.schema import BaseNode, NodeWithScore, TextNode
