@@ -1,0 +1,230 @@
+nohup: ignoring input
+/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/networkx/utils/backends.py:135: RuntimeWarning: networkx backend defined more than once: nx-loopback
+  backends.update(_get_backends("networkx.backends"))
+2026-07-30 08:15:18,240 - INFO - LLM optimization enabled. Initializing RBot model...
+Initializing LLMs with model: llama3:8b
+2026-07-30 08:15:18,241 - INFO - Initializing gte-Qwen2-1.5B-instruct embedding model...
+2026-07-30 08:15:18,254 - INFO - Load pretrained SentenceTransformer: Alibaba-NLP/gte-Qwen2-1.5B-instruct
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 74.56it/s]
+2026-07-30 08:15:21,342 - INFO - 2 prompts are loaded, with the keys: ['query', 'text']
+2026-07-30 08:15:21,344 - INFO - Initializing OpenAILike...
+2026-07-30 08:15:21,344 - INFO - Configuration:
+2026-07-30 08:15:21,344 - INFO -   Dataset: job_smoke
+2026-07-30 08:15:21,344 - INFO -   DB Name: imdb
+2026-07-30 08:15:21,344 - INFO -   Population Size: 50
+2026-07-30 08:15:21,344 - INFO -   Max Generations: 20
+2026-07-30 08:15:21,344 - INFO -   Mutation Rate: 0.5
+2026-07-30 08:15:21,344 - INFO -   Crossover Rate: 0.8
+2026-07-30 08:15:21,344 - INFO -   Use Actual Time Fitness: True
+2026-07-30 08:15:21,344 - INFO -   DB Timeout: 300s
+2026-07-30 08:15:21,344 - INFO -   LLM Enabled: True
+2026-07-30 08:15:21,344 - INFO -   LLM Open Source: True
+2026-07-30 08:15:21,344 - INFO -   LLM Model: llama3:8b
+2026-07-30 08:15:21,344 - INFO -   Verbose: True
+2026-07-30 08:15:21,344 - INFO -   Partial Run: False
+2026-07-30 08:15:21,344 - INFO -   Plot Fitness: False
+2026-07-30 08:15:21,344 - INFO - ========================================
+2026-07-30 08:15:21,345 - INFO - Available query templates: ['query9c', 'query9d']
+2026-07-30 08:15:21,345 - INFO - Processing template: query9c
+2026-07-30 08:15:21,345 - INFO - Processing query 0 for template query9c
+log4j:WARN No appenders could be found for logger (org.apache.calcite.sql.parser).
+log4j:WARN Please initialize the log4j system properly.
+log4j:WARN See http://logging.apache.org/log4j/1.2/faq.html#noconfig for more info.
+2026-07-30 08:15:22,211 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-07-30 08:15:22,309 - ERROR - Failed to send telemetry event ClientStartEvent: capture() takes 1 positional argument but 3 were given
+2026-07-30 08:15:22,309 - ERROR - Failed to send telemetry event ClientCreateCollectionEvent: capture() takes 1 positional argument but 3 were given
+2026-07-30 08:15:22,742 - INFO - Matched NL rewrite rules: ['can_be_optimized_by_set_op', 'can_be_optimized_by_function']
+2026-07-30 08:15:22,796 - INFO - Matched Calcite normalization rules: ['AGGREGATE_PROJECT_MERGE', 'FILTER_INTO_JOIN']
+2026-07-30 08:15:22,796 - INFO - Matched Calcite exploration rules: ['JOIN_TO_CORRELATE', 'PROJECT_FILTER_TRANSPOSE']
+2026-07-30 08:15:23,080 - INFO - Retrying request to /chat/completions in 0.482031 seconds
+2026-07-30 08:15:23,081 - INFO - Retrying request to /chat/completions in 0.468151 seconds
+2026-07-30 08:15:23,081 - INFO - Retrying request to /chat/completions in 0.491029 seconds
+2026-07-30 08:15:23,552 - INFO - Retrying request to /chat/completions in 0.820749 seconds
+2026-07-30 08:15:23,565 - INFO - Retrying request to /chat/completions in 0.833076 seconds
+2026-07-30 08:15:23,574 - INFO - Retrying request to /chat/completions in 0.992370 seconds
+2026-07-30 08:15:24,377 - INFO - Retrying request to /chat/completions in 1.944876 seconds
+2026-07-30 08:15:24,401 - INFO - Retrying request to /chat/completions in 1.988339 seconds
+2026-07-30 08:15:24,569 - INFO - Retrying request to /chat/completions in 1.865523 seconds
+2026-07-30 08:15:26,326 - WARNING - Retrying llama_index.llms.openai.base.OpenAI._achat in 1.0 seconds as it raised APIConnectionError: Connection error..
+2026-07-30 08:15:26,393 - WARNING - Retrying llama_index.llms.openai.base.OpenAI._achat in 1.0 seconds as it raised APIConnectionError: Connection error..
+2026-07-30 08:15:26,438 - WARNING - Retrying llama_index.llms.openai.base.OpenAI._achat in 1.0 seconds as it raised APIConnectionError: Connection error..
+2026-07-30 08:15:27,331 - INFO - Retrying request to /chat/completions in 0.462286 seconds
+2026-07-30 08:15:27,396 - INFO - Retrying request to /chat/completions in 0.471035 seconds
+2026-07-30 08:15:27,441 - INFO - Retrying request to /chat/completions in 0.392550 seconds
+2026-07-30 08:15:27,796 - INFO - Retrying request to /chat/completions in 0.898267 seconds
+2026-07-30 08:15:27,837 - INFO - Retrying request to /chat/completions in 0.919443 seconds
+2026-07-30 08:15:27,870 - INFO - Retrying request to /chat/completions in 0.944914 seconds
+2026-07-30 08:15:28,698 - INFO - Retrying request to /chat/completions in 1.759138 seconds
+2026-07-30 08:15:28,759 - INFO - Retrying request to /chat/completions in 1.745265 seconds
+2026-07-30 08:15:28,818 - INFO - Retrying request to /chat/completions in 1.670983 seconds
+2026-07-30 08:15:30,463 - WARNING - Retrying llama_index.llms.openai.base.OpenAI._achat in 1.3718092275428966 seconds as it raised APIConnectionError: Connection error..
+2026-07-30 08:15:30,492 - WARNING - Retrying llama_index.llms.openai.base.OpenAI._achat in 1.9029903853937356 seconds as it raised APIConnectionError: Connection error..
+2026-07-30 08:15:30,509 - WARNING - Retrying llama_index.llms.openai.base.OpenAI._achat in 1.1630271851682528 seconds as it raised APIConnectionError: Connection error..
+2026-07-30 08:15:31,677 - INFO - Retrying request to /chat/completions in 0.401617 seconds
+2026-07-30 08:15:31,838 - INFO - Retrying request to /chat/completions in 0.431217 seconds
+2026-07-30 08:15:32,081 - INFO - Retrying request to /chat/completions in 0.926657 seconds
+2026-07-30 08:15:32,272 - INFO - Retrying request to /chat/completions in 0.755825 seconds
+2026-07-30 08:15:32,399 - INFO - Retrying request to /chat/completions in 0.454159 seconds
+2026-07-30 08:15:32,856 - INFO - Retrying request to /chat/completions in 0.844189 seconds
+2026-07-30 08:15:33,011 - INFO - Retrying request to /chat/completions in 1.789014 seconds
+2026-07-30 08:15:33,032 - INFO - Retrying request to /chat/completions in 1.636033 seconds
+2026-07-30 08:15:33,704 - INFO - Retrying request to /chat/completions in 1.909303 seconds
+2026-07-30 08:15:39,680 - INFO - Retrying request to /chat/completions in 0.484595 seconds
+2026-07-30 08:15:49,695 - INFO - Retrying request to /chat/completions in 0.446903 seconds
+2026-07-30 08:15:49,696 - INFO - Retrying request to /chat/completions in 0.490628 seconds
+2026-07-30 08:15:49,696 - INFO - Retrying request to /chat/completions in 0.769697 seconds
+2026-07-30 08:15:50,144 - INFO - Retrying request to /chat/completions in 0.830120 seconds
+2026-07-30 08:15:50,189 - INFO - Retrying request to /chat/completions in 0.819815 seconds
+2026-07-30 08:15:50,468 - INFO - Retrying request to /chat/completions in 1.552056 seconds
+2026-07-30 08:15:50,978 - INFO - Retrying request to /chat/completions in 1.539655 seconds
+2026-07-30 08:15:51,011 - INFO - Retrying request to /chat/completions in 1.953148 seconds
+2026-07-30 08:15:52,024 - WARNING - Retrying llama_index.llms.openai.base.OpenAI._achat in 1.0 seconds as it raised APIConnectionError: Connection error..
+2026-07-30 08:15:52,521 - WARNING - Retrying llama_index.llms.openai.base.OpenAI._achat in 1.0 seconds as it raised APIConnectionError: Connection error..
+2026-07-30 08:15:52,967 - WARNING - Retrying llama_index.llms.openai.base.OpenAI._achat in 1.0 seconds as it raised APIConnectionError: Connection error..
+2026-07-30 08:15:53,027 - INFO - Retrying request to /chat/completions in 0.465939 seconds
+2026-07-30 08:15:53,496 - INFO - Retrying request to /chat/completions in 0.773800 seconds
+2026-07-30 08:15:53,526 - INFO - Retrying request to /chat/completions in 0.418186 seconds
+2026-07-30 08:15:53,948 - INFO - Retrying request to /chat/completions in 0.983529 seconds
+2026-07-30 08:15:53,971 - INFO - Retrying request to /chat/completions in 0.386674 seconds
+2026-07-30 08:15:54,273 - INFO - Retrying request to /chat/completions in 1.718260 seconds
+2026-07-30 08:15:54,361 - INFO - Retrying request to /chat/completions in 0.825986 seconds
+2026-07-30 08:15:54,936 - INFO - Retrying request to /chat/completions in 1.817207 seconds
+2026-07-30 08:15:55,189 - INFO - Retrying request to /chat/completions in 1.652613 seconds
+2026-07-30 08:15:55,996 - WARNING - Retrying llama_index.llms.openai.base.OpenAI._achat in 1.8317459478555096 seconds as it raised APIConnectionError: Connection error..
+2026-07-30 08:15:56,756 - WARNING - Retrying llama_index.llms.openai.base.OpenAI._achat in 1.053887811407714 seconds as it raised APIConnectionError: Connection error..
+2026-07-30 08:15:56,847 - WARNING - Retrying llama_index.llms.openai.base.OpenAI._achat in 1.0173039769660597 seconds as it raised APIConnectionError: Connection error..
+2026-07-30 08:15:57,815 - INFO - Retrying request to /chat/completions in 0.409961 seconds
+2026-07-30 08:15:57,831 - INFO - Retrying request to /chat/completions in 0.440641 seconds
+2026-07-30 08:15:57,868 - INFO - Retrying request to /chat/completions in 0.464876 seconds
+2026-07-30 08:15:58,227 - INFO - Retrying request to /chat/completions in 0.972006 seconds
+2026-07-30 08:15:58,274 - INFO - Retrying request to /chat/completions in 0.834477 seconds
+2026-07-30 08:15:58,336 - INFO - Retrying request to /chat/completions in 0.879964 seconds
+2026-07-30 08:15:59,112 - INFO - Retrying request to /chat/completions in 1.818305 seconds
+2026-07-30 08:15:59,202 - INFO - Retrying request to /chat/completions in 1.863062 seconds
+2026-07-30 08:15:59,218 - INFO - Retrying request to /chat/completions in 1.743118 seconds
+Traceback (most recent call last):
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/httpx/_transports/default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/httpcore/_async/connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/httpcore/_async/connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/httpcore/_async/connection.py", line 101, in handle_async_request
+    raise exc
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/httpcore/_async/connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/httpcore/_async/connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/httpcore/_backends/auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/httpcore/_backends/anyio.py", line 122, in connect_tcp
+    stream._raw_socket.setsockopt(*option)  # type: ignore[attr-defined] # pragma: no cover
+  File "/usr/lib64/python3.9/contextlib.py", line 137, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: All connection attempts failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/openai/_base_client.py", line 1519, in request
+    response = await self._client.send(
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/httpx/_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/httpx/_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/httpx/_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/httpx/_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/httpx/_transports/default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "/usr/lib64/python3.9/contextlib.py", line 137, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: All connection attempts failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/run_regensql.py", line 303, in <module>
+    main()
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/run_regensql.py", line 261, in main
+    result = process_query(name, query, schema, args, rbot_model)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/run_regensql.py", line 120, in process_query
+    best_solution = gi_optimizer.evolve()
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/src/genetic_optimizer/base.py", line 76, in evolve
+    self.population = self.generate_initial_population()
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/src/genetic_optimizer/gi_llm_rule_based.py", line 78, in generate_initial_population
+    suggestions, applicable_rules = self._retrieve_applicable_suggestions_and_rules()
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/src/genetic_optimizer/gi_llm_rule_based.py", line 38, in _retrieve_applicable_suggestions_and_rules
+    res = rag_retrieve(
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/src/rbot_rewriter/rag_retrieve.py", line 81, in rag_retrieve
+    retriever_res = retriever.retrieve(query)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/llama_index_instrumentation/dispatcher.py", line 319, in wrapper
+    result = func(*args, **kwargs)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/llama_index/core/base/base_retriever.py", line 246, in retrieve
+    nodes = self._retrieve(query_bundle)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/llama_index_instrumentation/dispatcher.py", line 319, in wrapper
+    result = func(*args, **kwargs)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/src/rbot_rag/my_query_fusion_retriver.py", line 296, in _retrieve
+    synthesized_queries = self._get_queries(query_bundle.query_str)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/src/rbot_rag/my_query_fusion_retriver.py", line 86, in _get_queries
+    rewrites, matched_rules = gen_rewrites_from_rules(
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/src/rbot_rag/gen_rewrites_from_rules.py", line 235, in gen_rewrites_from_rules
+    task_results = run_async_tasks(tasks)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/llama_index/core/async_utils.py", line 96, in run_async_tasks
+    outputs: List[Any] = asyncio_run(_gather())
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/llama_index/core/async_utils.py", line 52, in asyncio_run
+    return loop.run_until_complete(coro)
+  File "/usr/lib64/python3.9/asyncio/base_events.py", line 647, in run_until_complete
+    return future.result()
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/llama_index/core/async_utils.py", line 94, in _gather
+    return await asyncio.gather(*tasks_to_execute)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/src/rbot_rag/gen_rewrites_from_rules.py", line 211, in gen_rewrites_from_calcite_rules
+    task_results = await asyncio.gather(*tasks)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/src/rbot_rag/gen_rewrites_from_rules.py", line 188, in gen_rewrite_from_calcite_sub_rule
+    response = await fun(messages)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/src/rbot_rag/my_query_fusion_retriver.py", line 81, in _achat
+    response = await self._llm.achat(chat_messages)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/llama_index_instrumentation/dispatcher.py", line 365, in async_wrapper
+    result = await func(*args, **kwargs)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/llama_index/llms/openai_like/base.py", line 204, in achat
+    return await super().achat(messages, **kwargs)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/llama_index_instrumentation/dispatcher.py", line 365, in async_wrapper
+    result = await func(*args, **kwargs)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/llama_index/core/llms/callbacks.py", line 76, in wrapped_async_llm_chat
+    f_return_val = await f(_self, messages, **kwargs)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/llama_index/llms/openai/base.py", line 688, in achat
+    return await achat_fn(messages, **kwargs)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/tenacity/asyncio/__init__.py", line 189, in async_wrapped
+    return await copy(fn, *args, **kwargs)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/tenacity/asyncio/__init__.py", line 111, in __call__
+    do = await self.iter(retry_state=retry_state)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/tenacity/asyncio/__init__.py", line 153, in iter
+    result = await action(retry_state)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/tenacity/_utils.py", line 99, in inner
+    return call(*args, **kwargs)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/tenacity/__init__.py", line 420, in exc_check
+    raise retry_exc.reraise()
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/tenacity/__init__.py", line 187, in reraise
+    raise self.last_attempt.result()
+  File "/usr/lib64/python3.9/concurrent/futures/_base.py", line 439, in result
+    return self.__get_result()
+  File "/usr/lib64/python3.9/concurrent/futures/_base.py", line 391, in __get_result
+    raise self._exception
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/tenacity/asyncio/__init__.py", line 114, in __call__
+    result = await fn(*args, **kwargs)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/llama_index/llms/openai/base.py", line 743, in _achat
+    response = await aclient.chat.completions.create(
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/openai/resources/chat/completions/completions.py", line 2454, in create
+    return await self._post(
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/openai/_base_client.py", line 1784, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+  File "/cs/student/msc/sse/2021/channa/workspace/ReGenSQL/.venv/lib64/python3.9/site-packages/openai/_base_client.py", line 1551, in request
+    raise APIConnectionError(request=request) from err
+openai.APIConnectionError: Connection error.
